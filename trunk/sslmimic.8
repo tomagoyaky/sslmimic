@@ -1,0 +1,145 @@
+.TH sslmimic 8 2008-06-25 "SSLMimic SSL Web Proxy $Revision$"
+.\"
+.\" $Id:$
+.\"
+.\" Man page for SSLMimic
+.\"
+.\" $Log$
+.\"
+.SH NAME
+sslmimic \- SSLMimic SSL MIM proxy server
+.SH SYNOPSIS
+.B ssl_proxy.py
+[
+.B \-hvVdnilspcbu
+] [
+.BI \-p " port"
+] [
+.BI \-u " url-filter"
+] [
+.BI \-c " SSLcert"
+]
+.SH DESCRIPTION
+.B SSLMimic
+is a useful tool for debugging traffic send using HTTP.
+Unlike traditional HTTP debugging proxies, SSLMimic also
+has a SSL MIM mode, which enables you to debug HTTP sessions
+which are protected by SSL.
+.PP
+.B SSLMimic
+can rewrite URLs before they are processed
+to enable more advanced debugging and testing. (eg You can define
+a rule such as:
+"http://www.example.com/(foo/.*)=>http://test.example.com/\1")
+Which will do what you'd expect.
+.PP
+.B SSLMimic
+is designed to be easy to use.
+.PP
+.SH OPTIONS
+.IP "-d --debug"
+Enable verbose debug messages.
+.IP "-p --port <port>"
+Port number to for inbound proxy requests on.
+.I Default: 1443
+.IP "-h --help"
+Print help text to standard out and exit.
+.IP "-i --interactive"
+Operate as an interactive debugger. This causes all requests to be dumped
+to standard out. This is useful for one-shot debugging, etc.
+.IP "-v -V --version"
+Dump version information and exit.
+
+.IP "-b --daemon"
+Detach from controlling terminal.
+.B "This is currently BROKEN"
+
+.IP "-n --nodaemon"
+Do not detach from controlling terminal.
+.IP "-c --cert"
+SSL certificate to present to client for MIMed SSL connections.
+.IP "-l --payload"
+When operating as an interactive debugger, HTTP payload to standard out.
+When writing to a log file, HTTP payload data will be written to the log.
+.IP "--spoof <url regex>"
+Good question. XXX: Add description.
+.IP "--nospoof <url regex>"
+Good question. XXX: Add description.
+.IP "--thread"
+Enable threading.
+.IP "--nothread"
+Disable threading. This causes
+.B SSLMimic
+to process only a single request at a time. (eg If the browser makes
+two simultaneous requests to the proxy, the second request will not be
+considered until the first request is complete)
+.IP "-u --url <url regex>"
+Only valid in interactive mode. Only display info for URLs which match
+regex.
+.IP "--httpspoof <url regex> => <new dest>"
+Rewrite inbound requests before processing. Useful for testing, and debugging.
+Example:
+http://www.example.com/foo/(.*)=>http://test.example.com/bar/\1
+
+In this case, if you type http://www.example.com/foo/baz into your browser,
+the request will goto test.example.com/bar/baz. Note that the Host header
+will still say www.example.com, as this is not changed. (Perhaps it should be
+in a future version?)
+
+.IP --app_log
+Path to application log. This file is human readable ASCII text. It contains
+messages pertaining to the application. This file will not be written in
+interactive mode.
+
+.IP --access_log
+Path to access log. This file is written as a series of Python pickles. Use the
+included proxy_log_dumper.py program to read this file. This file will not be
+written in interactive mode.
+
+.IP --dont_create_missing_cert
+If the specified SSL cert does not exist, exit. By default, a cert with a
+common name of "*" will be created, and used. If the cert is not specified,
+the default of cert.pem is used.
+
+.SH EXIT CODES
+
+The exit codes for sslmimic are taken from /usr/include/sysexits.h
+
+.IP 1
+Generic Error.
+
+.IP 64
+Command line usage error. Invalid command line switches, etc.
+
+.IP 66
+Cannot open input.
+
+.IP 71
+System error (e.g., can't fork). Could not listen on port specified..
+
+.IP 73
+Can't create (user) output file. Can not open log files.
+
+
+.SH EXAMPLE USAGE
+.IP "Interactive debugger"
+sslmimic.py -i
+
+.IP "Logging proxy"
+sslmimic.py -p 3128 --app_log /var/log/sslmimic --access_log
+/var/log/sslmimic.access &
+
+.IP "Redirector"
+sslmimic.py --httpspoof
+http://www.example.com/application.jsp=>http://dev.example.com/application.jsp
+
+.SH SEE ALSO
+.BR python "(1), "
+
+.\" Could add the following sections:
+.\" .SH ENVIRONMENT
+.\" .SH DIAGNOSTICS
+.\" .SH BUGS
+.\" .SH AUTHOR
+.\" .SH SEE ALSO
+
