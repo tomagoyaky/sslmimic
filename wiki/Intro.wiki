@@ -36,4 +36,6 @@ We can see here that the first run the program creates an SSL cert to use (if it
   * Configure your web browser to point at the proxy
 (Localhost:1443)
 
+Note that your browser will produce SSL warnings, and you'll need to add exceptions for
+the SSL secured sites which you visit.
 Watch the content fly.
